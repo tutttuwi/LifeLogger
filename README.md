@@ -1,0 +1,2 @@
+# LifeLogger
+Life Logger Application
