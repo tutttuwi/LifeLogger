@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DTD -->
+<!DOCTYPE validators PUBLIC
+    "-//Apache Struts//XWork Validator 1.0.3//EN"
+    "http://struts.apache.org/dtds/xwork-validator-1.0.3.dtd">
+<validators>
+    <!-- name属性 -->
+    <field name="id">
+        <!-- 必須 -->
+        <field-validator type="requiredstring">
+            <param name="trim">true</param>
+            <message key="error.common.required.input">
+                <param name="0">getText("fieldname.login.id")</param>
+            </message>
+        </field-validator>
+    </field>
+    <!-- pass属性 -->
+    <field name="pw">
+        <!-- 必須 -->
+        <field-validator type="requiredstring">
+            <param name="trim">true</param>
+            <message key="error.common.required.input">
+                <param name="0">getText("fieldname.login.password")</param>
+            </message>
+        </field-validator>
+        <!-- パスワード属性の正規表現 -->
+        <field-validator type="regex">
+            <param name="regex"><![CDATA[[^()\*\+\-\.\/<=>?@\[\\\]{|}~]+]]></param>
+            <message key="error.form.login.pw.notpermittedstring" />
+        </field-validator>
+        <!-- TODO:パスワード制約は登録画面、更新画面に実装する。挙動は確認できているためいったんコメントアウトで残す。 -->
+<!--         <field-validator type="regex">
+            <param name="regex"><![CDATA[^(?=\d{0,99}[a-zA-Z])(?=[a-zA-Z]{0,99}\d)[a-zA-Z\d]{8,25}$]]></param>
+            <message key="error.form.login.pw.requirement" />
+        </field-validator> -->
+    </field>
+</validators>

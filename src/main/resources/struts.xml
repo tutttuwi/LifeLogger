@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+    <!-- property files definition -->
+    <!-- default : @see https://struts.apache.org/core-developers/default-properties.html -->
+    <constant name="struts.locale" value="jp_JP" />
+    <constant name="struts.i18n.encoding" value="UTF-8" />
+    <constant name="struts.custom.i18n.resources" value="message" />
+    <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+    <constant name="struts.ui.theme" value="simple" />
+    <constant name="struts.devMode" value="true" />
+    <!-- Setting from Action to Action to pass MessageInfo -->
+    <constant name="struts.xwork.chaining.copyErrors" value="true" />
+    <constant name="struts.xwork.chaining.copyFieldErrors" value="true" />
+    <constant name="struts.xwork.chaining.copyMessages" value="true" />
+    <!-- １つのフォームで複数のアクションを使いたい場合はtrueにするといいが、セキュリティ上避けるべき/代わりにJSでsubmit左記を分岐することをお勧めする -->
+    <constant name="struts.mapper.action.prefix.enabled" value="false" />
+    <!-- セキュリティ上よくないため、明示的にfalseを指定しておく -->
+    <constant name="struts.ognl.allowStaticMethodAccess" value="false" />
+    <!-- Include Definition -->
+    <!-- <include file="struts_actionname.xml" /> -->
+    <!-- アクションのパッケージ定義 -->
+    <package name="default" extends="struts-default">
+        <action name="*" class="me.tutttuwi.lifelogger.unknown.UnknownAction" method="doInit">
+            <result name="success">/WEB-INF/view/404.jsp</result>
+        </action>
+    </package>
+    <package name="root" extends="struts-default" namespace="/">
+        <interceptors>
+            <interceptor name="loginCheck" class="me.tutttuwi.lifelogger.LoginCheckInterceptor" />
+            <interceptor name="maintenanceCheck" class="me.tutttuwi.lifelogger.MaintenanceCheckInterceptor" />
+            <interceptor-stack name="lifeloggerStack">
+                <!-- <interceptor-ref name="defaultStack" /> -->
+                <!-- defaultStack redefinition START -->
+                <interceptor-ref name="exception" />
+                <interceptor-ref name="alias" />
+                <interceptor-ref name="servletConfig" />
+                <interceptor-ref name="i18n" />
+                <interceptor-ref name="prepare" />
+                <interceptor-ref name="chain" />
+                <interceptor-ref name="scopedModelDriven" />
+                <interceptor-ref name="modelDriven" />
+                <interceptor-ref name="fileUpload" />
+                <interceptor-ref name="checkbox" />
+                <interceptor-ref name="datetime" />
+                <interceptor-ref name="multiselect" />
+                <interceptor-ref name="staticParams" />
+                <interceptor-ref name="actionMappingParams" />
+                <interceptor-ref name="params" />
+                <interceptor-ref name="conversionError" />
+                <!-- validation custom -->
+                <interceptor-ref name="validation">
+                    <!-- <param name="excludeMethods">input,back,cancel,browse</param> -->
+                    <param name="excludeMethods">doInit</param>
+                </interceptor-ref>
+                <interceptor-ref name="workflow">
+                    <param name="excludeMethods">input,back,cancel,browse</param>
+                </interceptor-ref>
+                <interceptor-ref name="debugging" />
+                <!-- defaultStack redefinition END -->
+                <interceptor-ref name="token">
+                    <param name="excludeMethods">doInit</param>
+                    <param name="includeMethods">doLogin,doRegist,doUpdate</param>
+                </interceptor-ref>
+                <interceptor-ref name="annotationWorkflow" />
+                <!-- custom interceptor -->
+                <interceptor-ref name="loginCheck">
+                    <param name="excludeMethods">doLogin,doLogout</param>
+                </interceptor-ref>
+                <interceptor-ref name="maintenanceCheck" />
+            </interceptor-stack>
+        </interceptors>
+        <!-- Default Interceptor -->
+        <default-interceptor-ref name="lifeloggerStack" />
+        <!-- Global results -->
+        <global-results>
+            <result name="error">/WEB-INF/view/error.jsp</result><!-- TODO: Create ErrorPage -->
+            <result name="maintenance">/WEB-INF/view/maintenance.jsp</result> <!-- TODO: Create MantenancePage -->
+            <result name="session_expired">/WEB-INF/view/login.jsp</result>
+            <result name="invalid.token">/WEB-INF/view/500.jsp</result>
+        </global-results>
+        <!-- Global exception -->
+        <global-exception-mappings>
+            <exception-mapping result="error" exception="java.lang.Exception" />
+        </global-exception-mappings>
+        <!-- LOGIN ACTION -->
+        <action name="login_*" class="me.tutttuwi.lifelogger.login.LoginAction" method="{1}">
+            <result name="success">/WEB-INF/view/login.jsp</result>
+            <result name="login" type="chain">home_doInit</result>
+            <result name="input">/WEB-INF/view/login.jsp</result>
+            <!-- 許可メソッド(WhiteList形式/必須) -->
+            <allowed-methods>doInit,doLogin</allowed-methods>
+        </action>
+        <!-- HOME ACTION -->
+        <action name="home_*" class="me.tutttuwi.lifelogger.home.HomeAction" method="{1}">
+            <result name="success">/WEB-INF/view/home.jsp</result>
+            <result name="logout" type="chain">logout_doInit</result>
+            <allowed-methods>doInit,doLogout</allowed-methods>
+        </action>
+        <!-- LOGOUT ACTION -->
+        <action name="logout_*" class="me.tutttuwi.lifelogger.logout.LogoutAction" method="{1}">
+            <result name="success" type="chain">login_doInit</result>
+            <allowed-methods>doInit</allowed-methods>
+        </action>
+        <!-- REGIST-USER ACTION <action name="registuser_doInit" class="me.tutttuwi.lifelogger.user.RegistUserAction" method="doInit">
+            <result name="success">/view/registuser.jsp</result> </action> <action name="registuser_doRegist" class="me.tutttuwi.lifelogger.user.RegistUserAction"
+            method="doRegist"> <result name="input">/view/registuser.jsp</result> <result name="success">/view/registuser_complete.jsp</result>
+            </action> REMIND-PASSWORD ACTION <action name="remindpassword_doInit" class="me.tutttuwi.lifelogger.user.RemindPasswordAction"
+            method="doInit"> <result name="success">/view/remindpassword.jsp</result> </action> <action name="registuser_doRegist" class="me.tutttuwi.lifelogger.user.RegistUserAction"
+            method="doRegist"> <result name="input">/view/remindpassword.jsp</result> <result name="success">/view/remindpassword_complete.jsp</result>
+            </action> -->
+    </package>
+</struts>

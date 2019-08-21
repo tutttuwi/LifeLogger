@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="off" name="Module" packages="">
+    <Properties>
+        <Property name="ConsoleLoglayout">%d %highlight{%p - %m}{TRACE=blue}%n</Property>
+        <Property name="FileLoglayout">%d %p %c{1.} [%t] %m%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${ConsoleLoglayout}" />
+        </Console>
+        <RollingFile name="File" fileName="./log/app.log" filePattern="app-%d{yyyy-MM-dd}-%i.gz">
+            <PatternLayout pattern="${FileLoglayout}" />
+            <Policies>
+                <SizeBasedTriggeringPolicy size="20 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="3" />
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="Console" level="info" />
+            <AppenderRef ref="File" level="trace" />
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,10 @@
+create table user_idpw (
+  seq integer generated always as identity,
+  id integer,
+  password varchar(256),
+  user_kb char(2),
+  create_dt timestamp,
+  update_dt timestamp,
+  primary key(seq),
+  unique(id)
+);
