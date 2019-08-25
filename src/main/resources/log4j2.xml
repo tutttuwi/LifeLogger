@@ -8,7 +8,7 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${ConsoleLoglayout}" />
         </Console>
-        <RollingFile name="File" fileName="./log/app.log" filePattern="app-%d{yyyy-MM-dd}-%i.gz">
+        <RollingFile name="File" fileName="/var/log/tomcat/LifeLogger_app.log" filePattern="app-%d{yyyy-MM-dd}-%i.gz">
             <PatternLayout pattern="${FileLoglayout}" />
             <Policies>
                 <SizeBasedTriggeringPolicy size="20 MB" />

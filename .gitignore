@@ -1,4 +1,11 @@
 
+# Custom Config
+
+### Java ###
+./build/*
+
+# Automatic Generated
+
 # Created by https://www.gitignore.io/api/java,maven,java-web
 # Edit at https://www.gitignore.io/?templates=java,maven,java-web
 
